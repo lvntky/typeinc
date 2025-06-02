@@ -1,4 +1,4 @@
-# === Project Configuration ===
+# === Configuration ===
 CC        := gcc
 CSTD      := -std=c2x
 CFLAGS    := -Wall -Wextra -Werror -pedantic $(CSTD) -Iinclude
@@ -9,29 +9,32 @@ SRC_DIR   := src
 # === Source Files ===
 SRCS      := $(wildcard $(SRC_DIR)/*.c)
 OBJS      := $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%.o, $(SRCS))
-TARGETS   := $(BIN_DIR)/bloggen $(BIN_DIR)/blogd
 
-# === Build Rules ===
-.PHONY: all clean run bloggen blogd
+TYPEGEN_SRC := $(SRC_DIR)/typegen.c
+TYPED_SRC   := $(SRC_DIR)/typed.c
 
-all: $(TARGETS)
+TYPEGEN_BIN := $(BIN_DIR)/typegen
+TYPED_BIN   := $(BIN_DIR)/typed
 
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.c
+# === Rules ===
+.PHONY: all clean run typegen typed
+
+all: $(TYPEGEN_BIN) $(TYPED_BIN)
+
+$(TYPEGEN_BIN): $(TYPEGEN_SRC)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-$(BIN_DIR)/bloggen: $(BIN_DIR)/bloggen.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+$(TYPED_BIN): $(TYPED_SRC)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ $<
 
-$(BIN_DIR)/blogd: $(BIN_DIR)/blogd.o
-	$(CC) $(CFLAGS) -o $@ $^
+typegen: $(TYPEGEN_BIN)
+typed:   $(TYPED_BIN)
 
-bloggen: $(BIN_DIR)/bloggen
-blogd:   $(BIN_DIR)/blogd
-
-run: bloggen blogd
-	./$(BIN_DIR)/bloggen
-	./$(BIN_DIR)/blogd
+run: typegen typed
+	./$(TYPEGEN_BIN)
+	./$(TYPED_BIN)
 
 clean:
 	rm -rf $(BIN_DIR)

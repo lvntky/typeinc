@@ -1,0 +1,23 @@
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach
+SpaceBeforeParens: ControlStatements
+SortIncludes: true
+
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^<typeinc/'
+    Priority:        1
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '^<.*>'
+    Priority:        2
+    SortPriority:    1
+  - Regex:           '^".*"'
+    Priority:        3
+    SortPriority:    2
+
